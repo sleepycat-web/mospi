@@ -1,0 +1,4 @@
+{
+  "rewrites": [{ "source": "/data.json", "destination": "/api/data" }],
+  "functions": { "api/data.js": { "maxDuration": 30 } }
+}

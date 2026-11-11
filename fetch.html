@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AnkSetu · Live data status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Mono:wght@500;600&display=swap">
+<style>
+:root{--bg:#F3F5F9;--surface:#fff;--surface-2:#E9EEF7;--ink:#0D1B33;--muted:#566480;--line:#D9E0EC;--gov:#0B2A5B;--brand:#1C3F94;
+  --good:#17724A;--good-bg:#E2F3EA;--bad:#B42318;--bad-bg:#FCE6E3;--warn:#8A5A00;--warn-bg:#FFF1D6;--na:#566480;--na-bg:#E9EEF7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 'Noto Sans',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.top{background:var(--gov);color:#fff}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;width:100%}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand b{font-size:21px;font-weight:800}.brand b span{color:#FF9933}
+.brand small{display:block;color:#C9D5EE;font-size:12.5px}
+.btn{border:1px solid rgba(255,255,255,.35);background:#fff;color:var(--gov);font:inherit;font-weight:700;border-radius:8px;padding:8px 16px;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:transparent;color:#fff}
+main{flex:1;padding-block:24px 40px;display:flex;flex-direction:column;gap:20px}
+h1{font-size:26px;margin:0}
+h2{font-size:18px;margin:0 0 4px}
+.lede{color:var(--muted);margin:4px 0 0}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.stat .v{font-family:'Noto Sans Mono',monospace;font-size:26px;font-weight:600;line-height:1.2}
+.stat .v.good{color:var(--good)}.stat .v.bad{color:var(--bad)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card .hd{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card .hd p{margin:0;color:var(--muted);font-size:13px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 16px;border-top:1px solid var(--line);vertical-align:top;font-size:14px}
+th{background:var(--surface-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:0}
+td.mono,.mono{font-family:'Noto Sans Mono',monospace;font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.live{background:var(--good-bg);color:var(--good)}
+.fail{background:var(--bad-bg);color:var(--bad)}
+.part{background:var(--warn-bg);color:var(--warn)}
+.hard{background:var(--na-bg);color:var(--na)}
+.muted{color:var(--muted)}
+.err{background:var(--bad-bg);color:var(--bad);border-radius:10px;padding:12px 16px;font-size:14px}
+.sk{display:inline-block;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--surface-2) 25%,#dfe6f2 37%,var(--surface-2) 63%);background-size:400% 100%;animation:sk 1.4s ease infinite}
+@keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+.foot{background:var(--gov);color:#C9D5EE;font-size:13px}
+.foot .wrap{padding-block:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot a{color:#fff}
+@media (max-width:700px){th:nth-child(4),td:nth-child(4){display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="#fff" stroke="#FF9933" stroke-width="3"/><circle cx="24" cy="24" r="17.5" fill="none" stroke="#138808" stroke-width="1.2" stroke-dasharray="2 2.2"/><rect x="14" y="25" width="4.6" height="9" rx="1" fill="#0B2A5B"/><rect x="21.7" y="20" width="4.6" height="14" rx="1" fill="#0B2A5B"/><rect x="29.4" y="15" width="4.6" height="19" rx="1" fill="#0B2A5B"/><path d="M10 27C15 15 33 15 38 27" fill="none" stroke="#FF9933" stroke-width="2.6" stroke-linecap="round"/><path d="M10 35h28" stroke="#0B2A5B" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <div><b>Ank<span>Setu</span></b><small>Live data status</small></div></div>
+  <div style="display:flex;gap:8px"><a class="btn ghost" href="/" style="text-decoration:none">Open app</a><button class="btn" id="refetch">↻ Refetch now</button></div>
+</div></header>
+
+<main class="wrap">
+  <div>
+    <h1>What is live and what isn't</h1>
+    <p class="lede">This page calls <span class="mono">/data.json</span>, which fetches from <span class="mono">api.mospi.gov.in</span> on every request, and shows what came back. <span id="when"></span></p>
+  </div>
+  <div id="error"></div>
+  <div class="summary" id="summary"></div>
+  <section class="card">
+    <div class="hd"><h2>Fetched automatically from MoSPI</h2><p>Each row is checked in the response just received.</p></div>
+    <table><thead><tr><th>Dataset</th><th>Status</th><th>Latest period</th><th>Sample value</th><th>Source</th></tr></thead><tbody id="rows"></tbody></table>
+  </section>
+  <section class="card">
+    <div class="hd"><h2>Not fetched (hardcoded in the app)</h2><p>The MoSPI API doesn't provide these.</p></div>
+    <table><thead><tr><th>Data</th><th>Status</th><th>Why</th></tr></thead><tbody>
+      <tr><td>Release calendar ("Coming up")</td><td><span class="pill hard">Hardcoded</span></td><td class="muted">Not in the API. Update when MoSPI revises its advance release calendar.</td></tr>
+      <tr><td>Outlook projections (ARIMA, FY27–FY31)</td><td><span class="pill hard">Hardcoded</span></td><td class="muted">Model output fitted offline on annual data; refresh once a year.</td></tr>
+      <tr><td>Press release PDF links</td><td><span class="pill hard">Hardcoded</span></td><td class="muted">The API doesn't return release URLs; live data links to mospi.gov.in.</td></tr>
+      <tr><td>Exact release dates</td><td><span class="pill hard">Estimated</span></td><td class="muted">The API doesn't return them; estimated from the usual schedule.</td></tr>
+      <tr><td>State-wise unemployment rate</td><td><span class="pill hard">Not available</span></td><td class="muted">The app shows labour force participation for states instead.</td></tr>
+      <tr><td>Monthly state jobs data, city and district figures</td><td><span class="pill hard">Not available</span></td><td class="muted">MoSPI publishes monthly PLFS for All India only, and no city or district figures.</td></tr>
+    </tbody></table>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap"><span>Data: Ministry of Statistics &amp; Programme Implementation (MoSPI), Government of India</span><a href="https://api.mospi.gov.in/" target="_blank" rel="noopener">api.mospi.gov.in</a></div></footer>
+
+<script>
+(function(){
+'use strict';
+var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var QM=['Apr–Jun','Jul–Sep','Oct–Dec','Jan–Mar'];
+function per(p){
+  if(!p)return '—';
+  if(p.m)return M[p.m-1]+' '+p.y;
+  return 'Q'+p.q+' '+p.fy+'-'+String((p.fy+1)%100).padStart(2,'0')+' ('+QM[p.q-1]+' '+(p.q===4?p.fy+1:p.fy)+')';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function pct(x){return (x>0?'+':'')+x+'%';}
+// Each row: label, block, check(body) -> sample text or null if missing, endpoint
+var ROWS=[
+  ['Retail inflation (headline, index)','cpi',function(b){return b.data&&b.data.headline&&'All India '+b.data.headline.all[0]+'%';},'cpi/getCPIData'],
+  ['Food inflation','cpi',function(b){return b.data&&b.data.food&&'All India '+b.data.food.all[0]+'%';},'cpi/getCPIData · group Food'],
+  ['12 CPI categories','cpi',function(b){return b.div&&Object.keys(b.div).length+' categories';},'cpi/getCPIData'],
+  ['Inflation by state/UT','cpi',function(b){return b.states&&Object.keys(b.states.values).length+' states/UTs';},'cpi/getCPIData'],
+  ['Top 5 / bottom 5 items','cpi',function(b){return b.items&&b.items[0].en+' '+pct(b.items[0].v)+' … '+b.items[b.items.length-1].en+' '+pct(b.items[b.items.length-1].v);},'cpi/getCPIData · items'],
+  ['Industrial output (overall, index)','iip',function(b){return b.data&&'Growth '+pct(b.data.overall[0])+', index '+b.data.index;},'iip/getIipData · General'],
+  ['IIP sectors and use-based categories','iip',function(b){return b.data&&b.data.sectors&&'3 sectors, '+Object.keys(b.data.use).length+' categories';},'iip/getIipData · Sectoral, Use-based'],
+  ['23 manufacturing industries (NIC)','iip',function(b){return b.groups&&Object.keys(b.groups).length+' industries, total '+pct(b.total.g);},'iip/getIipData · Sectoral'],
+  ['GDP growth (real, GVA, nominal, size)','gdp',function(b){return b.data&&'Real '+b.data.real[0]+'%, ₹'+b.data.level+' lakh cr';},'nas/getNASData · 5, 21, 22'],
+  ['Primary / secondary / tertiary growth','gdp',function(b){return b.data&&b.data.sectors&&Object.keys(b.data.sectors).map(function(k){return b.data.sectors[k][0]+'%';}).join(' / ');},'computed from nas/getNASData · 1'],
+  ['GDP by 8 industries','gdp',function(b){return b.industry&&Object.keys(b.industry).length+' industries';},'nas/getNASData · 1, 21'],
+  ['Unemployment rate (monthly)','plfs',function(b){return b.data&&'All India '+b.data.ur.all[0]+'%';},'plfs/getData · monthly'],
+  ['Labour force participation & worker ratio (monthly)','plfs',function(b){return b.data&&'LFPR '+b.data.lfpr.all[0]+'%, WPR '+b.data.wpr.all[0]+'%';},'plfs/getData · monthly'],
+  ['State jobs figures (quarterly)','plfsq',function(b){return b.states&&Object.keys(b.states.lfpr).length+' states, India LFPR '+b.india.lfpr[2]+'%';},'plfs/getData · quarterly bulletin'],
+  ['"States like X" groupings','peers',null,'computed in api/data.js (k-means)']
+];
+var $=function(id){return document.getElementById(id);};
+var btn=$('refetch');
+function skeleton(){
+  $('summary').innerHTML=[0,1,2,3].map(function(){return '<div class="stat"><div class="k"><span class="sk" style="width:60%"></span></div><div class="v"><span class="sk" style="width:40%;height:22px"></span></div></div>';}).join('');
+  $('rows').innerHTML=ROWS.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td><span class="sk" style="width:60px"></span></td><td><span class="sk" style="width:90px"></span></td><td><span class="sk" style="width:140px"></span></td><td><span class="sk" style="width:120px"></span></td></tr>';}).join('');
+}
+function render(body,ms){
+  var B=body.blocks||{},E=body.errors||{},S=body.skipped||{},live=0,missing=0;
+  $('rows').innerHTML=ROWS.map(function(r){
+    var k=r[1],blk=k==='peers'?body.peers:B[k],sample=null,status;
+    if(k==='peers'){sample=blk&&('Inflation: '+blk.lenses.prices.k+' groups, jobs: '+blk.lenses.labour.k+' groups');}
+    else if(blk){try{sample=r[2](blk)||null;}catch(e){sample=null;}}
+    if(sample){status='<span class="pill live">Live</span>';live++;}
+    else if(blk){status='<span class="pill part">Partly missing</span>';missing++;}
+    else{status='<span class="pill fail">Not fetched</span>';missing++;}
+    var why=!sample?(E[k]||(S[k]||[]).join('; ')||(k==='peers'?'Needs live state data for both inflation and jobs':'')):'';
+    return '<tr><td>'+esc(r[0])+'</td><td>'+status+'</td><td class="mono">'+(blk&&blk.period?per(blk.period):k==='peers'&&blk?'with state data':'—')+'</td><td class="mono">'+(sample?esc(sample):'<span class="muted">'+esc(why||'—')+'</span>')+'</td><td class="mono muted">'+esc(r[3])+'</td></tr>';
+  }).join('');
+  $('summary').innerHTML=
+    '<div class="stat"><div class="k">Live datasets</div><div class="v good">'+live+' / '+ROWS.length+'</div></div>'+
+    '<div class="stat"><div class="k">Missing right now</div><div class="v'+(missing?' bad':'')+'">'+missing+'</div></div>'+
+    '<div class="stat"><div class="k">Fetch time</div><div class="v">'+(ms/1000).toFixed(1)+'s</div></div>'+
+    '<div class="stat"><div class="k">Fetched at (IST)</div><div class="v" style="font-size:20px">'+new Date(body.generated).toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+'</div></div>';
+  $('when').textContent='Last fetched '+new Date(body.generated).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'})+' IST.';
+}
+function load(){
+  btn.disabled=true;btn.textContent='Fetching…';$('error').innerHTML='';skeleton();
+  var t=performance.now();
+  fetch('/data.json?t='+Date.now(),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(b){render(b,performance.now()-t);})
+    .catch(function(e){
+      $('error').innerHTML='<div class="err"><b>Could not reach /data.json</b> ('+esc(e.message)+'). Run <span class="mono">node dev.js</span> and open <span class="mono">http://localhost:3000/fetch.html</span>, or open this page on the deployed site.</div>';
+      $('summary').innerHTML='';$('rows').innerHTML=ROWS.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td><span class="pill fail">Unknown</span></td><td>—</td><td>—</td><td class="mono muted">'+esc(r[3])+'</td></tr>';}).join('');
+    })
+    .then(function(){btn.disabled=false;btn.textContent='↻ Refetch now';});
+}
+btn.addEventListener('click',load);
+load();
+})();
+</script>
+</body>
+</html>
